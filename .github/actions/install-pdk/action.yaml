@@ -3,6 +3,11 @@ description: 'Install PDK using volare. Uses github actions cache'
 runs:
   using: "composite"
   steps:
+    - name: Set Env Variables
+      shell: bash
+      run: |
+        echo "PDK_ROOT=$HOME/.volare/" >> $GITHUB_ENV
+        echo "OPEN_PDKS_COMMIT=bdc9412b3e468c102d01b7cf6337be06ec6e9c9a" >> $GITHUB_ENV
     - name: Cache PDK
       id: cache-pdk
       uses: actions/cache/restore@v4
