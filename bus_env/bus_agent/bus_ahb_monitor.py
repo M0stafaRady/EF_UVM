@@ -22,7 +22,7 @@ class bus_ahb_monitor(bus_base_monitor):
             await self.assert_reset()
             start_thread.kill()
             self.active_reset = True
-            if self.data_phase_lock.locked:
+            if self.data_phase_lock.locked():
                 self.data_phase_lock.release()
 
     async def start(self):
@@ -145,7 +145,7 @@ class bus_ahb_monitor(bus_base_monitor):
                             tr.data = int(self.vif.HRDATA.value.binstr[24:], 2)
                     except ValueError:
                         tr.data = self.vif.HRDATA.value.binstr                    
-        if self.data_phase_lock.locked:
+        if self.data_phase_lock.locked():
             self.data_phase_lock.release()
         if self.active_reset:
             return
