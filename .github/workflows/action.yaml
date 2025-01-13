@@ -13,6 +13,13 @@ jobs:
         run: |
           python3 ./.github/scripts/get_IPs_matrix.py
           echo "IPs=$(python3 ./.github/scripts/get_IPs_matrix.py)" >> "$GITHUB_OUTPUT"
+
+  Setup-Env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install PDK
+        uses: efabless/EF_UVM/.github/actions/install-pdk@main
+
   IPs:
     strategy:
       fail-fast: false
