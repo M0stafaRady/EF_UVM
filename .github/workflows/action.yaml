@@ -13,11 +13,18 @@ jobs:
         run: |
           python3 ./.github/scripts/get_IPs_matrix.py
           echo "IPs=$(python3 ./.github/scripts/get_IPs_matrix.py)" >> "$GITHUB_OUTPUT"
+
+  Setup-Dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install PDK
+        uses: efabless/EF_UVM/.github/actions/install-pdk@main
+
   IPs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.Prepare-IPs-Matrix.outputs.IPs) }}
-    needs: [Prepare-IPs-Matrix]
+    needs: [Prepare-IPs-Matrix, Setup-Dependencies]
     name: ${{ matrix.IPs.name }}
     uses: ./.github/workflows/run_IP.yaml
     with:
