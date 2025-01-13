@@ -1,0 +1,32 @@
+name: 'Install PDK'
+description: 'Install PDK using volare. Uses github actions cache'
+runs:
+  using: "composite"
+  steps:
+    - name: Set Env Variables
+      shell: bash
+      run: |
+        echo "PDK_ROOT=$HOME/.volare" >> $GITHUB_OUTPUT
+        echo "OPEN_PDKS_COMMIT=bdc9412b3e468c102d01b7cf6337be06ec6e9c9a" >> $GITHUB_OUTPUT
+    - name: Cache PDK
+      shell: bash
+      id: cache-pdk
+      uses: actions/cache/restore@v4
+      with:
+        path: ${{env.PDK_ROOT}}
+        key: pdk-${{env.OPEN_PDKS_COMMIT}}
+        enableCrossOsArchive: "true"
+    - name: Download PDK
+      shell: bash
+      if: ${{ steps.cache-pdk.outputs.cache-hit != 'true' }} 
+      run: |
+        mkdir -p ${{ env.PDK_ROOT }}
+        pip install volare
+        volare enable ${{ env.OPEN_PDKS_COMMIT }}
+    - name: Save PDK Cache
+      shell: bash
+      if: ${{ steps.cache-pdk.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@v4
+      with:
+        path: ${{env.PDK_ROOT}}
+        key: pdk-${{env.OPEN_PDKS_COMMIT}}

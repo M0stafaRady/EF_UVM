@@ -29,7 +29,15 @@ on:
         required: false
         type: string
         default: no
+
+
 jobs:
+  Install-PDK:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install PDK
+        uses: efabless/EF_UVM/.github/actions/install-pdk@main
+
   Setup-Work-Space:
     runs-on: ubuntu-latest
     outputs:
@@ -106,7 +114,7 @@ jobs:
           echo "tests=$(python3 ${{ env.EF_UVM_PATH }}/.github/scripts/get_tests_matrix.py --tests ${{ inputs.test-names }} --buses ${{ inputs.buses }} --skip-gl ${{ inputs.skip-gl }}) " >> "$GITHUB_OUTPUT"
 
   Run-IP:
-    needs: [Setup-Work-Space, Prepare-Tests-Matrix]
+    needs: [Install-PDK, Setup-Work-Space, Prepare-Tests-Matrix]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -120,6 +128,8 @@ jobs:
           echo "IP_PATH=${{ github.workspace }}/${{ inputs.name }}" >> $GITHUB_ENV
           echo "MY_WORKSPACE=${{ github.workspace }}/${{ inputs.name }}" >> $GITHUB_ENV
           echo "STATUS=env-error" >> $GITHUB_ENV
+      - name: Install PDK
+        uses: efabless/EF_UVM/.github/actions/install-pdk@main
       - name: Set More Env Variables
         shell: bash
         run: |
